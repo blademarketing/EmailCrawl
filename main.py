@@ -22,15 +22,21 @@ class AsyncEmailScraper:
                                  '.css', '.html']
 
     async def crawl(self, session, url, depth):
-        # Return if depth exceeds max depth or if max pages have been crawled
-        if depth > self.max_depth or self.pages_crawled >= self.max_pages:
+        # Return if depth exceeds max depth
+        if depth > self.max_depth:
             return
+
+        # Check if we've reached the max pages limit before initiating the crawl
+        if self.pages_crawled >= self.max_pages:
+            return
+
+        # Increment the counter as soon as we initiate the crawl
+        self.pages_crawled += 1
+        print(f"Crawling: {url}")
 
         try:
             async with session.get(url) as response:
                 if response.status == 200:
-                    self.pages_crawled += 1
-                    print(f"Crawled: {url}")
                     html = await response.text()
                     self.extract_emails(html)
                     soup = BeautifulSoup(html, 'html.parser')
@@ -41,12 +47,13 @@ class AsyncEmailScraper:
                         href = link['href']
                         full_url = urljoin(url, href)
 
-                        # Only queue new crawl tasks if we haven't reached the max pages yet
+                        # Queue new crawl tasks if we haven't reached the max pages yet
                         if self.pages_crawled < self.max_pages and self.is_internal_link(full_url):
                             if full_url not in self.extracted_urls:
                                 self.extracted_urls.add(full_url)
                                 tasks.append(self.crawl(session, full_url, depth + 1))
 
+                    # Execute all tasks
                     await asyncio.gather(*tasks)
 
         except Exception as e:
