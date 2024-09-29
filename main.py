@@ -49,7 +49,7 @@ class AsyncEmailScraper:
                     await asyncio.gather(*tasks)
 
         except Exception as e:
-            print(f"Error fetching {url}: {str(e)}")  # Fixed line
+            print(f"Error fetching {url}: {str(e)}")
 
     def extract_emails(self, html):
         email_pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
