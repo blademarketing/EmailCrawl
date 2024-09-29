@@ -40,7 +40,8 @@ class AsyncEmailScraper:
                         href = link['href']
                         full_url = urljoin(url, href)
 
-                        if self.is_internal_link(full_url):
+                        # Check if we should stop crawling based on page limits
+                        if self.pages_crawled < self.max_pages and self.is_internal_link(full_url):
                             if full_url not in self.extracted_urls:
                                 self.extracted_urls.add(full_url)
                                 tasks.append(self.crawl(session, full_url, depth + 1))
@@ -48,7 +49,7 @@ class AsyncEmailScraper:
                     await asyncio.gather(*tasks)
 
         except Exception as e:
-            print(f"Error fetching {url}: {str(e)}")
+            print(f"Error fetching {url}: {str(e)}")  # Fixed line
 
     def extract_emails(self, html):
         email_pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
