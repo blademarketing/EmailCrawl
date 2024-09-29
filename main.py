@@ -22,9 +22,13 @@ class AsyncEmailScraper:
                                  '.css', '.html']
 
     async def crawl(self, session, url, depth):
-        if depth > self.max_depth or self.pages_crawled >= self.max_pages:
+        if depth > self.max_depth:
             return
         
+        # If we have already crawled the maximum number of pages, return
+        if self.pages_crawled >= self.max_pages:
+            return
+
         try:
             async with session.get(url) as response:
                 if response.status == 200:
