@@ -49,6 +49,7 @@ class AsyncEmailScraper:
                     await asyncio.gather(*tasks)
 
         except Exception as e:
+<<<<<<< HEAD
             print(f"Error fetching {url}: {str(e)}")  # Fixed line
 
     def extract_emails(self, html):
@@ -94,3 +95,6 @@ app.router.add_post('/scrape', handle_post)
 
 if __name__ == "__main__":
     web.run_app(app, port=6662)
+=======
+            print(f"Error fetching {url}: {str(e
+>>>>>>> 786233e007f4749e201819bfaa52ce7ca64133d3
