@@ -22,11 +22,8 @@ class AsyncEmailScraper:
                                  '.css', '.html']
 
     async def crawl(self, session, url, depth):
-        if depth > self.max_depth:
-            return
-        
-        # If we have already crawled the maximum number of pages, return
-        if self.pages_crawled >= self.max_pages:
+        # Return if depth exceeds max depth or if max pages have been crawled
+        if depth > self.max_depth or self.pages_crawled >= self.max_pages:
             return
 
         try:
@@ -44,7 +41,7 @@ class AsyncEmailScraper:
                         href = link['href']
                         full_url = urljoin(url, href)
 
-                        # Check if we should stop crawling based on page limits
+                        # Only queue new crawl tasks if we haven't reached the max pages yet
                         if self.pages_crawled < self.max_pages and self.is_internal_link(full_url):
                             if full_url not in self.extracted_urls:
                                 self.extracted_urls.add(full_url)
